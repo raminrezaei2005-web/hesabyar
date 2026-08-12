@@ -1,0 +1,1080 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>حساب‌یار کارخانه</title>
+
+<style>
+*{box-sizing:border-box}
+
+body{
+margin:0;
+font-family:Tahoma,Arial,sans-serif;
+background:#f1f5f9;
+color:#17202a;
+}
+
+header{
+background:#14532d;
+color:white;
+padding:18px;
+text-align:center;
+}
+
+header h1{
+margin:0;
+font-size:25px;
+}
+
+.container{
+max-width:1200px;
+margin:auto;
+padding:15px;
+}
+
+.cards{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(150px,1fr));
+gap:12px;
+margin-bottom:15px;
+}
+
+.card{
+background:white;
+padding:18px;
+border-radius:14px;
+box-shadow:0 2px 8px #0002;
+text-align:center;
+}
+
+.card span{
+display:block;
+font-size:24px;
+font-weight:bold;
+color:#166534;
+margin-top:8px;
+}
+
+.menu{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(130px,1fr));
+gap:8px;
+margin-bottom:15px;
+}
+
+button{
+border:0;
+border-radius:9px;
+padding:12px;
+background:#166534;
+color:white;
+font-size:14px;
+cursor:pointer;
+}
+
+button:hover{
+opacity:.9;
+}
+
+.danger{
+background:#b91c1c;
+}
+
+.blue{
+background:#1d4ed8;
+}
+
+.orange{
+background:#c2410c;
+}
+
+.section{
+background:white;
+padding:18px;
+border-radius:14px;
+box-shadow:0 2px 8px #0001;
+margin-bottom:15px;
+}
+
+.hidden{
+display:none;
+}
+
+input,select{
+width:100%;
+padding:12px;
+margin:5px 0;
+border:1px solid #d1d5db;
+border-radius:8px;
+font-size:15px;
+}
+
+.grid{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+gap:10px;
+}
+
+table{
+width:100%;
+border-collapse:collapse;
+margin-top:15px;
+overflow:hidden;
+}
+
+th,td{
+padding:10px;
+border-bottom:1px solid #e5e7eb;
+text-align:right;
+}
+
+th{
+background:#f3f4f6;
+}
+
+.total{
+font-size:20px;
+font-weight:bold;
+margin-top:15px;
+color:#166534;
+}
+
+@media(max-width:600px){
+table{
+font-size:12px;
+}
+button{
+font-size:13px;
+}
+}
+</style>
+</head>
+
+<body>
+
+<header>
+<h1>حساب‌یار کارخانه</h1>
+<p>سیستم مدیریت، حسابداری و هزینه‌های کارخانه</p>
+</header>
+
+<div class="container">
+
+<!-- کارت‌های اصلی -->
+
+<div class="cards">
+
+<div class="card">
+فروش کل
+<span id="totalSales">0</span>
+</div>
+
+<div class="card">
+خرید کل
+<span id="totalPurchases">0</span>
+</div>
+
+<div class="card">
+هزینه کل
+<span id="totalExpenses">0</span>
+</div>
+
+<div class="card">
+سود / زیان
+<span id="profit">0</span>
+</div>
+
+<div class="card">
+اجناس
+<span id="productCount">0</span>
+</div>
+
+<div class="card">
+مشتریان
+<span id="customerCount">0</span>
+</div>
+
+</div>
+
+
+<!-- منو -->
+
+<div class="menu">
+
+<button onclick="show('dashboard')">🏠 داشبورد</button>
+
+<button onclick="show('products')">📦 اجناس</button>
+
+<button onclick="show('customers')">👤 مشتریان</button>
+
+<button onclick="show('sales')">💰 فروش</button>
+
+<button onclick="show('purchases')">🛒 خرید</button>
+
+<button onclick="show('expenses')">💸 هزینه‌ها</button>
+
+<button onclick="show('reports')">📊 گزارشات</button>
+
+</div>
+
+
+<!-- داشبورد -->
+
+<div id="dashboard" class="section">
+
+<h2>🏠 داشبورد</h2>
+
+<p>به سیستم حساب‌یار کارخانه خوش آمدید.</p>
+
+<div class="grid">
+
+<button onclick="show('products')">📦 مدیریت اجناس</button>
+
+<button onclick="show('sales')">💰 ثبت فروش</button>
+
+<button onclick="show('purchases')">🛒 ثبت خرید</button>
+
+<button onclick="show('expenses')">💸 ثبت هزینه</button>
+
+</div>
+
+</div>
+
+
+<!-- اجناس -->
+
+<div id="products" class="section hidden">
+
+<h2>📦 مدیریت اجناس</h2>
+
+<div class="grid">
+
+<input id="productName" placeholder="نام جنس">
+
+<input id="productQty" type="number" placeholder="تعداد">
+
+<input id="productPrice" type="number" placeholder="قیمت">
+
+</div>
+
+<button onclick="addProduct()">ثبت جنس</button>
+
+<table>
+
+<thead>
+<tr>
+<th>نام جنس</th>
+<th>تعداد</th>
+<th>قیمت</th>
+<th>عملیات</th>
+</tr>
+</thead>
+
+<tbody id="productsTable"></tbody>
+
+</table>
+
+</div>
+
+
+<!-- مشتریان -->
+
+<div id="customers" class="section hidden">
+
+<h2>👤 مشتریان</h2>
+
+<div class="grid">
+
+<input id="customerName" placeholder="نام مشتری">
+
+<input id="customerPhone" placeholder="شماره تماس">
+
+<input id="customerAddress" placeholder="آدرس">
+
+</div>
+
+<button onclick="addCustomer()">ثبت مشتری</button>
+
+<table>
+
+<thead>
+<tr>
+<th>نام</th>
+<th>شماره</th>
+<th>آدرس</th>
+<th>عملیات</th>
+</tr>
+</thead>
+
+<tbody id="customersTable"></tbody>
+
+</table>
+
+</div>
+
+
+<!-- فروش -->
+
+<div id="sales" class="section hidden">
+
+<h2>💰 ثبت فروش</h2>
+
+<div class="grid">
+
+<input id="saleCustomer" placeholder="نام مشتری">
+
+<input id="saleProduct" placeholder="نام جنس">
+
+<input id="saleQty" type="number" placeholder="تعداد">
+
+<input id="salePrice" type="number" placeholder="قیمت واحد">
+
+<input id="saleDate" type="date">
+
+</div>
+
+<button onclick="addSale()">ثبت فروش</button>
+
+<table>
+
+<thead>
+<tr>
+<th>تاریخ</th>
+<th>مشتری</th>
+<th>جنس</th>
+<th>تعداد</th>
+<th>قیمت</th>
+<th>مجموع</th>
+</tr>
+</thead>
+
+<tbody id="salesTable"></tbody>
+
+</table>
+
+</div>
+
+
+<!-- خرید -->
+
+<div id="purchases" class="section hidden">
+
+<h2>🛒 ثبت خرید</h2>
+
+<div class="grid">
+
+<input id="purchaseSupplier" placeholder="نام فروشنده / تأمین‌کننده">
+
+<input id="purchaseProduct" placeholder="نام جنس">
+
+<input id="purchaseQty" type="number" placeholder="تعداد">
+
+<input id="purchasePrice" type="number" placeholder="قیمت واحد">
+
+<input id="purchaseDate" type="date">
+
+</div>
+
+<button onclick="addPurchase()">ثبت خرید</button>
+
+<table>
+
+<thead>
+<tr>
+<th>تاریخ</th>
+<th>فروشنده</th>
+<th>جنس</th>
+<th>تعداد</th>
+<th>قیمت</th>
+<th>مجموع</th>
+</tr>
+</thead>
+
+<tbody id="purchasesTable"></tbody>
+
+</table>
+
+</div>
+
+
+<!-- هزینه‌ها -->
+
+<div id="expenses" class="section hidden">
+
+<h2>💸 ثبت هزینه‌ها</h2>
+
+<p>در این قسمت می‌توانیم هزینه‌های کارخانه را جداگانه ثبت کنیم.</p>
+
+<div class="grid">
+
+<select id="expenseType">
+
+<option value="">نوع هزینه را انتخاب کنید</option>
+
+<option value="بیل">🧱 بیل</option>
+
+<option value="برق">⚡ برق</option>
+
+<option value="آب">💧 مصرف آب</option>
+
+<option value="کرایه">🚚 کرایه</option>
+
+<option value="زمین">🏞️ زمین</option>
+
+<option value="مواد سوخت">⛽ مواد سوخت</option>
+
+<option value="کارگر">👷 کارگر</option>
+
+<option value="تعمیرات">🔧 تعمیرات</option>
+
+<option value="دیگر">📌 دیگر</option>
+
+</select>
+
+<input id="expenseDescription" placeholder="توضیحات">
+
+<input id="expenseAmount" type="number" placeholder="مبلغ">
+
+<input id="expenseDate" type="date">
+
+</div>
+
+<button onclick="addExpense()">ثبت هزینه</button>
+
+<table>
+
+<thead>
+<tr>
+<th>تاریخ</th>
+<th>نوع هزینه</th>
+<th>توضیحات</th>
+<th>مبلغ</th>
+<th>عملیات</th>
+</tr>
+</thead>
+
+<tbody id="expensesTable"></tbody>
+
+</table>
+
+</div>
+
+
+<!-- گزارشات -->
+
+<div id="reports" class="section hidden">
+
+<h2>📊 گزارش مالی</h2>
+
+<div class="grid">
+
+<div class="card">
+فروش
+<span id="reportSales">0</span>
+</div>
+
+<div class="card">
+خرید
+<span id="reportPurchases">0</span>
+</div>
+
+<div class="card">
+هزینه‌ها
+<span id="reportExpenses">0</span>
+</div>
+
+<div class="card">
+سود / زیان
+<span id="reportProfit">0</span>
+</div>
+
+</div>
+
+<h3>جزئیات هزینه‌ها</h3>
+
+<table>
+
+<thead>
+<tr>
+<th>نوع هزینه</th>
+<th>مجموع</th>
+</tr>
+</thead>
+
+<tbody id="expenseReport"></tbody>
+
+</table>
+
+</div>
+
+</div>
+
+
+<script>
+
+/* =========================
+   دیتابیس موقت مرورگر
+========================= */
+
+let products =
+JSON.parse(localStorage.getItem("products") || "[]");
+
+let customers =
+JSON.parse(localStorage.getItem("customers") || "[]");
+
+let sales =
+JSON.parse(localStorage.getItem("sales") || "[]");
+
+let purchases =
+JSON.parse(localStorage.getItem("purchases") || "[]");
+
+let expenses =
+JSON.parse(localStorage.getItem("expenses") || "[]");
+
+
+/* =========================
+   ذخیره اطلاعات
+========================= */
+
+function saveData(){
+
+localStorage.setItem(
+"products",
+JSON.stringify(products)
+);
+
+localStorage.setItem(
+"customers",
+JSON.stringify(customers)
+);
+
+localStorage.setItem(
+"sales",
+JSON.stringify(sales)
+);
+
+localStorage.setItem(
+"purchases",
+JSON.stringify(purchases)
+);
+
+localStorage.setItem(
+"expenses",
+JSON.stringify(expenses)
+);
+
+}
+
+
+/* =========================
+   نمایش بخش‌ها
+========================= */
+
+function show(id){
+
+document
+.querySelectorAll(".section")
+.forEach(section=>{
+section.classList.add("hidden");
+});
+
+document
+.getElementById(id)
+.classList.remove("hidden");
+
+}
+
+
+/* =========================
+   اجناس
+========================= */
+
+function addProduct(){
+
+let name =
+document.getElementById("productName").value;
+
+let qty =
+Number(document.getElementById("productQty").value);
+
+let price =
+Number(document.getElementById("productPrice").value);
+
+if(!name || !qty){
+
+alert("نام و تعداد جنس را وارد کنید");
+
+return;
+}
+
+products.push({
+name:name,
+qty:qty,
+price:price
+});
+
+saveData();
+
+render();
+
+document.getElementById("productName").value="";
+document.getElementById("productQty").value="";
+document.getElementById("productPrice").value="";
+
+}
+
+
+function deleteProduct(index){
+
+products.splice(index,1);
+
+saveData();
+
+render();
+
+}
+
+
+/* =========================
+   مشتریان
+========================= */
+
+function addCustomer(){
+
+let name =
+document.getElementById("customerName").value;
+
+let phone =
+document.getElementById("customerPhone").value;
+
+let address =
+document.getElementById("customerAddress").value;
+
+if(!name){
+
+alert("نام مشتری را وارد کنید");
+
+return;
+}
+
+customers.push({
+name:name,
+phone:phone,
+address:address
+});
+
+saveData();
+
+render();
+
+document.getElementById("customerName").value="";
+document.getElementById("customerPhone").value="";
+document.getElementById("customerAddress").value="";
+
+}
+
+
+function deleteCustomer(index){
+
+customers.splice(index,1);
+
+saveData();
+
+render();
+
+}
+
+
+/* =========================
+   فروش
+========================= */
+
+function addSale(){
+
+let customer =
+document.getElementById("saleCustomer").value;
+
+let product =
+document.getElementById("saleProduct").value;
+
+let qty =
+Number(document.getElementById("saleQty").value);
+
+let price =
+Number(document.getElementById("salePrice").value);
+
+let date =
+document.getElementById("saleDate").value ||
+new Date().toISOString().split("T")[0];
+
+if(!product || !qty || !price){
+
+alert("معلومات فروش را کامل وارد کنید");
+
+return;
+}
+
+sales.push({
+
+customer:customer,
+
+product:product,
+
+qty:qty,
+
+price:price,
+
+total:qty*price,
+
+date:date
+
+});
+
+saveData();
+
+render();
+
+}
+
+
+/* =========================
+   خرید
+========================= */
+
+function addPurchase(){
+
+let supplier =
+document.getElementById("purchaseSupplier").value;
+
+let product =
+document.getElementById("purchaseProduct").value;
+
+let qty =
+Number(document.getElementById("purchaseQty").value);
+
+let price =
+Number(document.getElementById("purchasePrice").value);
+
+let date =
+document.getElementById("purchaseDate").value ||
+new Date().toISOString().split("T")[0];
+
+if(!product || !qty || !price){
+
+alert("معلومات خرید را کامل وارد کنید");
+
+return;
+}
+
+purchases.push({
+
+supplier:supplier,
+
+product:product,
+
+qty:qty,
+
+price:price,
+
+total:qty*price,
+
+date:date
+
+});
+
+saveData();
+
+render();
+
+}
+
+
+/* =========================
+   هزینه‌ها
+========================= */
+
+function addExpense(){
+
+let type =
+document.getElementById("expenseType").value;
+
+let description =
+document.getElementById("expenseDescription").value;
+
+let amount =
+Number(document.getElementById("expenseAmount").value);
+
+let date =
+document.getElementById("expenseDate").value ||
+new Date().toISOString().split("T")[0];
+
+if(!type || !amount){
+
+alert("نوع هزینه و مبلغ را وارد کنید");
+
+return;
+}
+
+expenses.push({
+
+type:type,
+
+description:description,
+
+amount:amount,
+
+date:date
+
+});
+
+saveData();
+
+render();
+
+}
+
+
+/* =========================
+   حذف هزینه
+========================= */
+
+function deleteExpense(index){
+
+expenses.splice(index,1);
+
+saveData();
+
+render();
+
+}
+
+
+/* =========================
+   نمایش اطلاعات
+========================= */
+
+function render(){
+
+/* اجناس */
+
+document.getElementById("productsTable").innerHTML =
+products.map((p,i)=>`
+
+<tr>
+
+<td>${p.name}</td>
+
+<td>${p.qty}</td>
+
+<td>${p.price}</td>
+
+<td>
+
+<button
+class="danger"
+onclick="deleteProduct(${i})">
+حذف
+</button>
+
+</td>
+
+</tr>
+
+`).join("");
+
+
+/* مشتریان */
+
+document.getElementById("customersTable").innerHTML =
+customers.map((c,i)=>`
+
+<tr>
+
+<td>${c.name}</td>
+
+<td>${c.phone || "-"}</td>
+
+<td>${c.address || "-"}</td>
+
+<td>
+
+<button
+class="danger"
+onclick="deleteCustomer(${i})">
+حذف
+</button>
+
+</td>
+
+</tr>
+
+`).join("");
+
+
+/* فروش */
+
+document.getElementById("salesTable").innerHTML =
+sales.map(s=>`
+
+<tr>
+
+<td>${s.date}</td>
+
+<td>${s.customer || "-"}</td>
+
+<td>${s.product}</td>
+
+<td>${s.qty}</td>
+
+<td>${s.price}</td>
+
+<td>${s.total}</td>
+
+</tr>
+
+`).join("");
+
+
+/* خرید */
+
+document.getElementById("purchasesTable").innerHTML =
+purchases.map(p=>`
+
+<tr>
+
+<td>${p.date}</td>
+
+<td>${p.supplier || "-"}</td>
+
+<td>${p.product}</td>
+
+<td>${p.qty}</td>
+
+<td>${p.price}</td>
+
+<td>${p.total}</td>
+
+</tr>
+
+`).join("");
+
+
+/* هزینه */
+
+document.getElementById("expensesTable").innerHTML =
+expenses.map((e,i)=>`
+
+<tr>
+
+<td>${e.date}</td>
+
+<td>${e.type}</td>
+
+<td>${e.description || "-"}</td>
+
+<td>${e.amount}</td>
+
+<td>
+
+<button
+class="danger"
+onclick="deleteExpense(${i})">
+حذف
+</button>
+
+</td>
+
+</tr>
+
+`).join("");
+
+
+/* مجموع‌ها */
+
+let salesTotal =
+sales.reduce((sum,x)=>sum+x.total,0);
+
+let purchasesTotal =
+purchases.reduce((sum,x)=>sum+x.total,0);
+
+let expensesTotal =
+expenses.reduce((sum,x)=>sum+x.amount,0);
+
+let profit =
+salesTotal-purchasesTotal-expensesTotal;
+
+
+/* کارت‌ها */
+
+document.getElementById("totalSales")
+.textContent=salesTotal.toLocaleString();
+
+document.getElementById("totalPurchases")
+.textContent=purchasesTotal.toLocaleString();
+
+document.getElementById("totalExpenses")
+.textContent=expensesTotal.toLocaleString();
+
+document.getElementById("profit")
+.textContent=profit.toLocaleString();
+
+document.getElementById("productCount")
+.textContent=products.length;
+
+document.getElementById("customerCount")
+.textContent=customers.length;
+
+
+/* گزارش */
+
+document.getElementById("reportSales")
+.textContent=salesTotal.toLocaleString();
+
+document.getElementById("reportPurchases")
+.textContent=purchasesTotal.toLocaleString();
+
+document.getElementById("reportExpenses")
+.textContent=expensesTotal.toLocaleString();
+
+document.getElementById("reportProfit")
+.textContent=profit.toLocaleString();
+
+
+/* گزارش هزینه‌ها */
+
+let types={};
+
+expenses.forEach(e=>{
+
+if(!types[e.type]){
+types[e.type]=0;
+}
+
+types[e.type]+=e.amount;
+
+});
+
+document.getElementById("expenseReport").innerHTML =
+Object.keys(types).map(type=>`
+
+<tr>
+
+<td>${type}</td>
+
+<td>${types[type].toLocaleString()}</td>
+
+</tr>
+
+`).join("");
+
+}
+
+
+/* اجرای اولیه */
+
+render();
+
+</script>
+
+</body>
+</html>
